@@ -1,0 +1,54 @@
+#!/bin/sh
+set -e
+
+echo "=========================================="
+echo "     FTP Server Setup"
+echo "=========================================="
+
+read_secret() {
+    secret_file="$1"
+    if [ -f "$secret_file" ] && [ -s "$secret_file" ]; then
+        cat "$secret_file" | tr -d '\n'
+    else
+        echo "[ERROR] Secret file '$secret_file' not found or empty" >&2
+        exit 1
+    fi
+}
+
+echo "[INFO] Loading secrets..."
+
+FTP_PASSWORD=$(read_secret "/run/secrets/vsftp_password")
+echo "[SUCCESS] Secrets loaded successfully"
+
+
+FTP_USER=nobody
+echo "[INFO] Configuring FTP user: $FTP_USER"
+
+if ! id "$FTP_USER" &>/dev/null; then
+    echo "[INFO] Creating FTP user: $FTP_USER"
+    adduser -D -h /var/www/html -s /bin/sh "$FTP_USER"
+else
+    echo "[NOTICE] FTP user $FTP_USER already exists"
+fi
+
+echo "[INFO] Setting FTP password..."
+echo "${FTP_USER}:${FTP_PASSWORD}" | chpasswd
+
+echo "[SUCCESS] FTP credentials configured:"
+echo "   Username: $FTP_USER"
+echo "   Password: ********"
+
+mkdir -p /var/run/vsftpd/empty
+mkdir -p /var/log
+mkdir -p /var/www/html
+
+echo "[INFO] Setting WordPress directory permissions..."
+chown -R "$FTP_USER":"$FTP_USER" /var/www/html
+find /var/www/html -type d -exec chmod 755 {} \;
+find /var/www/html -type f -exec chmod 644 {} \;
+
+mkdir -p /var/www/html/wp-content
+chmod -R 775 /var/www/html/wp-content 2>/dev/null || true
+
+echo "[INFO] Starting vsftpd..."
+exec vsftpd /etc/vsftpd/vsftpd.conf
