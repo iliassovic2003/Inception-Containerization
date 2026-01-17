@@ -25,7 +25,8 @@ RUN apk update && apk upgrade && \
     rm -rf /var/cache/apk/*
 
 RUN addgroup -g 82 -S www-data 2>/dev/null || true && \
-    adduser -u 82 -D -S -G www-data -H -h /var/www -s /sbin/nologin www-data 2>/dev/null || true
+    adduser -u 82 -D -S -G www-data -H -h /var/www -s /sbin/nologin www-data 2>/dev/null || true && \
+    adduser -u 65534 -D -S -H -h /var/www/html -s /bin/sh nobody 2>/dev/null || true
 
 RUN echo 'memory_limit = 256M' > /etc/php83/conf.d/memory.ini
 

@@ -20,5 +20,3 @@ RUN 	chmod +x /usr/local/bin/vsftp.sh && \
     	chmod 644 /etc/vsftpd/vsftpd.conf
 
 CMD	["/usr/local/bin/vsftp.sh"]
-
-

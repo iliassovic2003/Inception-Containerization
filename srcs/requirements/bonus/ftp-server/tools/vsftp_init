@@ -50,5 +50,8 @@ find /var/www/html -type f -exec chmod 644 {} \;
 mkdir -p /var/www/html/wp-content
 chmod -R 775 /var/www/html/wp-content 2>/dev/null || true
 
+chown -R nobody:nobody /var/www/html 2>/dev/null || true
+chmod -R 777 /var/www/html 2>/dev/null || true
+
 echo "[INFO] Starting vsftpd..."
 exec vsftpd /etc/vsftpd/vsftpd.conf
