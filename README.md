@@ -1,40 +1,57 @@
 # Project Documentation
-
-*This documentation should provides a decent understanding of the project, showing the application of the containerization concept, created by **izahr**.*
+*This documentation provides a comprehensive understanding of the project, demonstrating the application of containerization concepts, created by **izahr**.*
 
 ---
 
-## What Is Docker ?
-"Docker is an open platform for developing, shipping, and running applications. which enables you to separate your applications from your infrastructure so you can deliver software quickly..."(1), Containers are the mear aspect of this technology, it consist that rather than using a virtual machine with whole installation of the OS can lead to ressource exhausting and time consuming, the container already uses the kernel of the host machine, and requires the dependencies and libraries to function.
+## 📦 What Is Docker?
 
-## Benefits
+*"Docker is an open platform for developing, shipping, and running applications, which enables you to separate your applications from your infrastructure so you can deliver software quickly..."¹*
+
+Containers are the core aspect of this technology. Rather than using a virtual machine with a complete OS installation—which can lead to resource exhaustion and time consumption—containers already use the kernel of the host machine and only require the necessary dependencies and libraries to function.
+
+---
+
+## ✨ Benefits
+
 ### 🚀 Portability
-No more "it works on my machine" problems.
+No more "it works on my machine" problems. Docker containers run consistently across different environments.
 
 ### ⚡ Efficiency
-Has Lower Ressources Usage, Faster Startup and Lightweight Than most of VMs.
+- **Lower Resource Usage**: Containers share the host OS kernel
+- **Faster Startup**: Boot in seconds instead of minutes
+- **Lightweight**: Significantly smaller footprint than VMs
 
 ### 🛡️ Isolation
-Docker Uses Technics To Trick the containers into thinking that even if they are in same memory, they are isolated. Like the use of Kernel Namespaces
-"...Namespaces provide the first and most straightforward form of isolation. Processes running within a container cannot see, and even less affect, processes running in another container, or in the host system..." (2). {will be discussed much further below}
+Docker uses advanced techniques to isolate containers, even when they share the same memory space. Through kernel namespaces:
+
+*"...Namespaces provide the first and most straightforward form of isolation. Processes running within a container cannot see, and even less affect, processes running in another container, or in the host system..."²*
+
 
 ### 📈 Scalability
-Perfect for microservices architecture, where a failing service doesn't condemn the whole program.
+Perfect for microservices architecture, where a failing service doesn't compromise the entire application.
 
 ---
 
-## Dockerfile
-"...A Dockerfile is a text file containing instructions for building your source code..."(3), an automatization to make a Docker Image, which is a product with multiple layers, implemented to setup the service in the container, and ensure the work of it.
+## 📝 Dockerfile
+
+*"...A Dockerfile is a text file containing instructions for building your source code..."³*
+
+It provides automation to create a Docker Image—a layered product designed to set up and ensure the service works correctly within the container.
 
 ---
 
-## Docker Compose
-In Simple Terms, It is the Responsable of the comminucation and the gestion of multiple docker containers, with a sets of rules to implement, creating of a network, and volumes where the data may persist.
+## 🎼 Docker Compose
+
+In simple terms, Docker Compose is responsible for the communication and management of multiple Docker containers. It implements:
+- **Networking**: Creates networks for inter-container communication
+- **Volumes**: Persistent data storage
+- **Service orchestration**: Manages service dependencies and startup order
 
 ---
 
-## Docker Network
-Allowing the container networking, Since The containers are isolated in memory, a network is then needed to communicate within it Using Sets Of Ports.
+## 🌐 Docker Network
+
+Allows container networking. Since containers are isolated in memory, a network is needed for communication using defined ports.
 
 ### Why Custom Bridge Network?
 - **DNS Resolution**: Containers can reach each other by name
@@ -53,8 +70,11 @@ Allowing the container networking, Since The containers are isolated in memory, 
 
 ---
 
-## Docker Volume
-"Volumes are persistent data stores for containers, created and managed by Docker..."(4), it is a mean to keep data from being erased, ranges from user uploads to themes and preferences. But given the options, you can choose how to implement those data storages.
+## 💾 Docker Volume
+
+*"Volumes are persistent data stores for containers, created and managed by Docker..."⁴*
+
+Volumes provide a means to preserve data from being erased, ranging from user uploads to themes and preferences. Multiple implementation options are available for data storage.
 
 ### Docker Volumes vs Bind Mounts
 
@@ -69,11 +89,13 @@ Allowing the container networking, Since The containers are isolated in memory, 
 
 ---
 
-## Security
-Despite the isolation of containers, there are many means of penetrating the security of such project, that ranges from Http protocol penetrating, to password leaking over environnement.
+## 🔒 Security
+
+Despite container isolation, there are multiple potential security vulnerabilities, ranging from HTTP protocol penetration to password leakage through environment variables.
 
 ### Password Security
-Docker implemented The Docker Secrets, requieres a password to be in a single file, to be taken then and provide him in the /docker/run directory, with atmost security, instead of being in an env file that get served to each container.
+
+Docker implements **Docker Secrets**, which requires passwords to be stored in a single file, then provided to the `/run/secrets/` directory with maximum security, instead of being in an environment file that gets served to each container.
 
 | Feature | Docker Secrets | Environment Variables |
 |---------|----------------|----------------------|
@@ -84,7 +106,8 @@ Docker implemented The Docker Secrets, requieres a password to be in a single fi
 | **Example** | Database passwords | Domain names, ports |
 
 ### HTTPS Protocol
-Since NGinx is the Webserver Responsable of the https request, and the past history of cyber-violence, The TLS (short for Transport Layer Security) has been born into this world.
+
+Since NGINX is the web server responsible for HTTPS requests, and given the history of cyber threats, **TLS (Transport Layer Security)** was developed to secure communications.
 
 | TLS Version | Year | Status | Key Features | Security | Browser Support | Deprecated |
 |-------------|------|--------|--------------|----------|----------------|------------|
@@ -137,11 +160,103 @@ Since NGinx is the Webserver Responsable of the https request, and the past hist
 ```
 
 ### Docker CLI
-Or So Called docker, is the Command-line interface for Docker operations. it means it's where the user interact with certain commands to start and stop the services, inspect the volumes, debug...
-that needs to communicate using a UNIX socket or a TCP connection with the Docker Daemon.
+
+The Docker CLI (Command-Line Interface) is where users interact with Docker using commands to start and stop services, inspect volumes, debug, and more. It communicates with the Docker Daemon using either a UNIX socket or a TCP connection.
+- Written in Go
+- Sends commands via JSON/REST API
+- Primary interface for Docker operations
+
+**Key features:**
+- Written in Go
+- Sends commands via JSON/REST API
+- Primary interface for Docker operations
 
 ### Docker Daemon
 
+The Docker Daemon (`dockerd`) is the persistent background service that:
+- Listens for Docker API requests
+- Manages Docker objects (containers, images, networks, volumes)
+- Handles container lifecycle
+- Communicates with container runtime (containerd)
+
+**Communication methods:**
+- **Unix Socket** (`/var/run/docker.sock`): Default, local-only access
+- **TCP Socket** (port 2375/2376): Remote access (requires proper security)
+
+### Container Creation Flow
+
+```text
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    USER EXECUTES COMMAND                                │
+│                    $ docker run nginx                                   │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         Docker CLI                                      │
+│                                                                         │
+│  • Parses command                                                       │
+│  • Sends API request to daemon                                          │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                      Docker Daemon (dockerd)                            │
+│                                                                         │
+│  1. Pulls image if not present                                          │
+│  2. Creates container configuration                                     │
+│  3. Sets up networking                                                  │
+│  4. Prepares volumes                                                    │
+│  5. Calls containerd                                                    │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                       containerd                                        │
+│                   (Container Supervisor)                                │
+│                                                                         │
+│  • Manages container lifecycle                                          │
+│  • Handles image transfer from daemon                                   │
+│  • Supervises runc                                                      │
+│  • Manages container snapshots                                          │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                       containerd-shim                                   │
+│                                                                         │
+│  • Keeps container running if containerd restarts                       │
+│  • Reports exit status                                                  │
+│  • Manages STDIO streams                                                │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           runc                                          │
+│                    (OCI Runtime)                                        │
+│                                                                         │
+│  1. Creates namespaces                                                  │
+│  2. Sets up cgroups (resource limits)                                   │
+│  3. Configures root filesystem (overlay/bind mounts)                    │
+│  4. Applies security profiles (AppArmor/SELinux)                        │
+│  5. Executes container process                                          │
+│  6. Exits (shim takes over)                                             │
+└────────────────────────────┬────────────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    RUNNING CONTAINER                                    │
+│                                                                         │
+│  ┌───────────────────────────────────────────┐                          │
+│  │  Isolated Process with:                   │                          │
+│  │  • Own PID namespace                      │                          │
+│  │  • Own network stack                      │                          │
+│  │  • Own filesystem view                    │                          │
+│  │  • Resource limits (CPU, memory)          │                          │
+│  │  • Security constraints                   │                          │
+│  └───────────────────────────────────────────┘                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
 ---
 
 ## 📋 Service Overview
@@ -149,12 +264,14 @@ that needs to communicate using a UNIX socket or a TCP connection with the Docke
 This infrastructure consists of the following services:
 
 ### Core Services
+
 - **NGINX** - Secure web server (HTTPS only, TLSv1.2/1.3)
 - **WordPress** - Content management system with PHP-FPM
 - **MariaDB** - Database server for WordPress data
 - **Redis** - Cache service for improved performance
 
 ### Bonus Services
+
 - **FTP Server** - File upload/download service
 - **Adminer** - Database management interface
 - **Static Website** - Custom landing page
@@ -162,9 +279,107 @@ This infrastructure consists of the following services:
 
 ---
 
+## 🔗 Service Architecture & Communication Flow
+
+```text
+                                    INTERNET
+                                       │
+                                       │ HTTPS (443)
+                                       │ TLS 1.2/1.3
+                                       ▼
+┌──────────────────────────────────────────────────────────────────────────┐
+│                              HOST SYSTEM                                 │
+│  ┌────────────────────────────────────────────────────────────────────┐  │
+│  │                      Docker Bridge Network                         │  │
+│  │                        (inception-net)                             │  │
+│  │                                                                    │  │
+│  │  ┌─────────────────────────────────────────────────────────────┐   │  │
+│  │  │                         NGINX                               │   │  │
+│  │  │                    (Reverse Proxy)                          │   │  │
+│  │  │                                                             │   │  │
+│  │  │  • Port 443 (HTTPS)                                         │   │  │
+│  │  │  • SSL/TLS Termination                                      │   │  │
+│  │  │  • Routes requests to backend services                      │   │  │
+│  │  └──────────────┬────────────────┬─────────────┬───────────────┘   │  │
+│  │                 │                │             │                   │  │
+│  │                 │                │             │                   │  │
+│  │      ┌──────────▼──────┐  ┌──────▼──────┐  ┌───▼───────────┐       │  │
+│  │      │   WordPress     │  │   Adminer   │  │ Static Site   │       │  │
+│  │      │   (PHP-FPM)     │  │             │  │               │       │  │
+│  │      │                 │  │  Port 8080  │  │  Port 80      │       │  │
+│  │      │  • Port 9000    │  │             │  │               │       │  │
+│  │      │  • FastCGI      │  │  Database   │  │  HTML/CSS/JS  │       │  │
+│  │      └────┬─────┬──────┘  │  Manager    │  │               │       │  │
+│  │           │     │         └──────┬──────┘  └───────────────┘       │  │
+│  │           │     │                │                                 │  │
+│  │           │     │                │                                 │  │
+│  │           │     └────────────────┼─────────────────┐               │  │
+│  │           │                      │                 │               │  │
+│  │           │                      │                 │               │  │
+│  │      ┌────▼──────────┐      ┌────▼─────────┐  ┌────▼─────────┐     │  │
+│  │      │    Redis      │      │   MariaDB    │  │  FTP Server  │     │  │
+│  │      │    (Cache)    │      │  (Database)  │  │              │     │  │
+│  │      │               │      │              │  │  Port 21     │     │  │
+│  │      │  Port 6379    │      │  Port 3306   │  │  Port 21000  │     │  │
+│  │      │               │----->│              │  │              │     │  │
+│  │      │  • Object     │      │  • WordPress │  │  • FTPS      │     │  │
+│  │      │    Caching    │      │    Data      │  │  • Upload/   │     │  │
+│  │      │  • Session    │      │  • Users     │  │    Download  │     │  │
+│  │      │    Storage    │      │  • Posts     │  │              │     │  │
+│  │      └───────────────┘      └──────────────┘  └──────────────┘     │  │
+│  │                                                                    │  │
+│  │  ┌─────────────────────────────────────────────────────────────┐   │  │
+│  │  │                       cAdvisor                              │   │  │
+│  │  │                  (Monitoring Service)                       │   │  │
+│  │  │                                                             │   │  │
+│  │  │  • Port 8081                                                │   │  │
+│  │  │  • Monitors all containers                                  │   │  │
+│  │  │  • Resource usage metrics                                   │   │  │
+│  │  │  • Performance analytics                                    │   │  │
+│  │  └─────────────────────────────────────────────────────────────┘   │  │
+│  │                                                                    │  │
+│  └────────────────────────────────────────────────────────────────────┘  │
+│                                                                          │
+│  ┌────────────────────────────────────────────────────────────────────┐  │
+│  │                      Docker Volumes                                │  │
+│  │                                                                    │  │
+│  │  • wordpress-data  → /var/www/html (WordPress files)               │  │
+│  │  • mariadb-data    → /var/lib/mysql (Database files)               │  │
+│  │  • nginx-certs     → /etc/nginx/ssl (SSL certificates)             │  │
+│  └────────────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+---
+
+1. (https://docs.docker.com/get-started/docker-overview/)
+2. (https://docs.docker.com/engine/security/#kernel-namespaces)
+3. (https://docs.docker.com/build/concepts/dockerfile/)
+4. (https://docs.docker.com/engine/storage/volumes/)
 
 
-(1) https://docs.docker.com/get-started/docker-overview/
-(2) https://docs.docker.com/engine/security/#kernel-namespaces
-(3) https://docs.docker.com/build/concepts/dockerfile/
-(4) https://docs.docker.com/engine/storage/volumes/
+## 📚 References
+### 📖 Books & Documentation
+- **Docker Deep Dive: Zero to Docker in a single book**  
+  *by Nigel Poulton*
+
+### 🔐 Security & Standards
+- [Docker Swarm Secrets](https://docs.docker.com/engine/swarm/secrets/)
+- [TLS 1.3 Specification (RFC 8446)](https://datatracker.ietf.org/doc/html/rfc8446)
+- [TLS 1.2 Specification (RFC 5246)](https://datatracker.ietf.org/doc/html/rfc5246)
+
+### 🛠️ Core Technologies
+- [containerd - Container Runtime](https://github.com/containerd/containerd)
+- [NGINX - Configuring HTTPS Servers](https://nginx.org/en/docs/http/configuring_https_servers.html)
+- [PHP-FPM Installation Guide](https://www.php.net/manual/en/install.fpm.php)
+- [Redis Developer Tools](https://redis.io/docs/latest/develop/tools/)
+
+### 🗄️ Database & CMS
+- [WordPress Official Docker Image](https://hub.docker.com/_/wordpress)
+- [MariaDB Documentation](https://mariadb.org/documentation/)
+
+### 🔧 Additional Tools
+- [vsftpd - Secure FTP Server](https://security.appspot.com/vsftpd.html)
+- [Adminer - Database Management](https://www.adminer.org/en/)
+- [cAdvisor - Container Monitoring](https://github.com/google/cadvisor)
+
+---
