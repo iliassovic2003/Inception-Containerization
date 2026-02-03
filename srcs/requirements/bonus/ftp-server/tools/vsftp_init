@@ -2,7 +2,7 @@
 set -e
 
 echo "=========================================="
-echo "     FTP Server Setup - UID/GID Fix"
+echo "             FTP Server Setup
 echo "=========================================="
 
 read_secret() {
@@ -19,10 +19,8 @@ echo "[INFO] Loading secrets..."
 FTP_PASSWORD=$(read_secret "/run/secrets/vsftp_password")
 echo "[SUCCESS] Secrets loaded successfully"
 
-# Create www-data group and user with matching UID/GID from WordPress
 echo "[INFO] Creating www-data user with UID=33 GID=33 (matching WordPress)"
 
-# Create group first
 if ! getent group www-data >/dev/null 2>&1; then
     addgroup -g 33 www-data
     echo "[SUCCESS] Created www-data group (GID=33)"
